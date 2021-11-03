@@ -1,0 +1,290 @@
+<div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+        <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+            <span class="fs-4" style="color: black;">Attendance Marking for Classroom</span>
+        </a>
+
+        <ul class="nav nav-pills">
+            <li class="nav-item"><button (click)="gotoHome()" class="nav-link active" aria-current="page"
+                    *ngIf="view[1] || view[2] || view[3] || view[4]">Home</button></li>
+            <li class="nav-item"><button (click)="logout()" class="nav-link active" aria-current="page"
+                    *ngIf="view[0]">logout</button></li>
+        </ul>
+    </header>
+</div>
+
+
+<!-- <div class="text-center">
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-dark px-100">View Sessions</button>
+        <button type="button" class="btn btn-dark px-100">View Trainers</button>
+        <button type="button" class="btn btn-dark px-100">Views Skill Sets</button>
+    </div>
+</div> -->
+
+<div *ngIf="view[0]">
+    <div>
+        <h1 style="text-align: center;" class="h3 mb-3 fw-normal">Welcome {{admin.firstName}} {{admin.lastName}} (Admin)
+        </h1>
+    </div>
+    <div class="float-container">
+        <div class="float-child1">
+            <h1 class="h3 mb-3 fw-normal text-center">Session Details</h1>
+            <div class="input-group">
+                <select class="form-control" name="skillSet" [(ngModel)]="skillType">
+                    <option value="all">All</option>
+                    <option *ngFor="let skill of skills" value="{{skill.skillType}}">{{skill.skillType}}</option>
+                </select>
+                <button type="button" class="btn btn-dark" (click)="getSessionsBySkillType()">Search</button>
+            </div>
+            <br />
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Skill Set</th>
+                        <th>Date</th>
+                        <th>Slot</th>
+                        <th>Assigned Trainer</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let session of sessions">
+                        <td><button type="button" class="btn btn-link"
+                                (click)="sessionDetails(session)">{{session.sessionDescription}}</button></td>
+                        <td>{{session.skillType}}</td>
+                        <td>{{session.sessionDate.slice(0,10)}}</td>
+                        <td>{{session.slot}}</td>
+                        <td>{{session.trainerName}}</td>
+                        <td><button type="button" class="btn btn-warning"
+                                (click)="updateSession(session.sessionId)">Update</button></td>
+                        <td><button type="button" class="btn btn-danger"
+                                (click)="delete('session',session.sessionId)">Delete</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <a type="button" class="btn btn-success" (click)="addSessionView()">Add Session</a>
+        </div>
+        <div class="float-child2">
+            <div class="float-child">
+
+                <h1 class="h3 mb-3 fw-normal text-center">Trainer Details</h1>
+
+                <br />
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Trainer Name</th>
+                            <th>Skill</th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let trainer of trainers">
+                            <td>{{trainer.trainerName}}</td>
+                            <td>{{trainer.skillType}}</td>
+                            <td><button type="button" class="btn btn-warning"
+                                    (click)="updateTrainer(trainer.trainerId)">Update</button></td>
+                            <td><button type="button" class="btn btn-danger"
+                                    (click)="delete('trainer',trainer.trainerId)">Delete</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a type="button" class="btn btn-success" (click)="addTrainerView()">Add Trainer</a>
+                <p></p>
+            </div>
+            <div class="float-child">
+                <h1 class="h3 mb-3 fw-normal text-center">Skill Set Details</h1>
+                <br />
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Skill</th>
+                            <th>Description</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let skill of skills">
+                            <td>{{skill.skillType}}</td>
+                            <td>{{skill.skillDescription}}</td>
+                            <td><button type="button" class="btn btn-danger"
+                                    (click)="delete('skillset',skill.skillId)">Delete</button></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <a type="button" class="btn btn-success" (click)="addSkillSetView()">Add Skill Set</a>
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Session-->
+<main class="form-registration" *ngIf="view[1]">
+    <form (ngSubmit)="addSession()">
+        <h1 class="h3 mb-3 fw-normal text-center">Let's Create a Session</h1>
+
+        <fieldset class="form-group">
+            <label>Session Description:</label>
+            <input type="text" class="form-control" name="sessionDescription"
+                [(ngModel)]="session.sessionDescription" />
+            <p style="color: crimson;">{{message1}}</p>
+        </fieldset>
+        <fieldset class="form-group">
+            <label>Skillset:</label>
+            <select class="form-control" name="skillSet" [(ngModel)]="session.skillType">
+                <option *ngFor="let skill of skills" value="{{skill.skillType}}">{{skill.skillType}}</option>
+            </select>
+            <p style="color: crimson;">{{message2}}</p>
+        </fieldset>
+        <fieldset class="form-group">
+            <label>Session Date:</label>
+            <input type="date" class="form-control" name="sessionDate" min="{{todaysDate}}" required
+                [(ngModel)]="session.sessionDate" onkeydown="return false" />
+        </fieldset>
+        <fieldset class="form-group">
+            <label>Slot:</label>
+            <select class="form-control" name="slot" [(ngModel)]="session.slot">
+                <option value="9am-11am">9am to 11am </option>
+                <option value="11am-1pm">11am to 1pm</option>
+                <option value="2pm-4pm">2pm to 4pm</option>
+                <option value="4pm-6pm">4pm to 6 pm</option>
+            </select>
+            <p style="color: crimson;">{{message3}}</p>
+        </fieldset>
+        <label>Assign Trainer:</label>
+        <div class="input-group">
+            <select class="form-control" name="trainerName" [(ngModel)]="session.trainer.trainerId">
+                <option *ngFor="let trainer of availableTrainers" value="{{trainer.trainerId}}">{{trainer.trainerName}}
+                </option>
+            </select>
+            <button type="button" class="btn btn-dark" (click)="getAvailableTrainers()">Fetch Trainers</button>
+        </div>
+        <p style="color: crimson;">{{message4}}</p>
+        <br />
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">submit</button>
+        </div>
+
+    </form>
+</main>
+
+<!--  Add Trainer  -->
+<main class="form-registration" *ngIf="view[2]">
+    <form (ngSubmit)="addTrainer()">
+        <h1 class="h3 mb-3 fw-normal text-center">Let's Add a Trainer</h1>
+        <fieldset class="form-group">
+            <label>Trainer Name:</label>
+            <input type="text" class="form-control" name="trainerName" [(ngModel)]="trainer.trainerName" />
+            <p style="color: crimson;">{{message1}}</p>
+        </fieldset>
+        <fieldset class="form-group">
+            <label>Skillset:</label>
+            <select class="form-control" name="skillSet" [(ngModel)]="trainer.skillType">
+                <option *ngFor="let skill of skills" value="{{skill.skillType}}">{{skill.skillType}}</option>
+            </select>
+            <p style="color: crimson;">{{message2}}</p>
+        </fieldset>
+        <fieldset>
+            <label>email:</label>
+            <input type="email" class="form-control" name="email" [(ngModel)]="trainer.email"
+                placeholder="example@domain.com" />
+            <p style="color: crimson;">{{message3}}</p>
+        </fieldset>
+        <fieldset>
+            <label>Contact Number:</label>
+            <input type="text" class="form-control" name="contactNumber" [(ngModel)]="trainer.contactNumber" />
+            <p style="color: crimson;">{{message4}}</p>
+        </fieldset>
+        <br />
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">submit</button>
+        </div>
+    </form>
+</main>
+
+
+<!--  Add Skill Set-->
+<main class="form-registration" *ngIf="view[3]">
+    <form (ngSubmit)="addSkillSet()">
+        <h1 class="h3 mb-3 fw-normal text-center">Let's Add a Trainer</h1>
+        <fieldset class="form-group">
+            <label>Skill Name:</label>
+            <input type="text" class="form-control" name="skillType" [(ngModel)]="skill.skillType" />
+            <p style="color: crimson;">{{message1}}</p>
+        </fieldset>
+        <fieldset>
+            <label>Skill Description: (optional)</label>
+            <input type="text" class="form-control" name="description" [(ngModel)]="skill.skillDescription" />
+        </fieldset>
+        <br />
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">submit</button>
+        </div>
+    </form>
+</main>
+
+
+
+<div class="float-container" *ngIf="view[4]">
+    <h1 class="h3 mb-3 fw-normal text-center">Session Report</h1>
+    <br />
+    <main>
+        <p style="font-size:larger;"> Session Name: {{session.sessionDescription}}<br />
+            Skill: {{session.skillType}}<br />
+            Session Date: {{session.sessionDate.slice(0,10)}}<br />
+            Session Slot: {{session.slot}}<br />
+            Trainer: {{session.trainer.trainerName}}</p>
+    </main>
+
+    <div class="float-child3">
+        <main class="form-registration" style="max-width: 600px;">
+
+            <h1 class="h3 mb-3 fw-normal text-center">Enrolled Users</h1>
+            <br />
+
+            <table class="table table-sm text-center">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of enrolledUsers">
+                        <td>{{user.firstName}} {{user.lastName}}</td>
+                        <td>{{user.email}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+    <div class="float-child4">
+        <main class="form-registration" style="max-width: 600px;">
+
+            <h1 class="h3 mb-3 fw-normal text-center">Attended Users</h1>
+            <br />
+
+            <table class="table table-sm text-center">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of attendedUsers">
+                        <td>{{user.firstName}} {{user.lastName}}</td>
+                        <td>{{user.email}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </main>
+    </div>
+</div>

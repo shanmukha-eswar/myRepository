@@ -1,0 +1,69 @@
+<div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+        <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+            <span class="fs-4" style="color: black;">Attendance Marking for Classroom</span>
+        </a>
+
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a [routerLink]="['']" class="nav-link active" aria-current="page">Back</a></li>
+        </ul>
+    </header>
+</div>
+<main class="form-registration">
+    <form (ngSubmit)="onSubmit()">
+
+        <h1 class="h3 mb-3 fw-normal text-center">Admin Registration Form</h1>
+
+        <fieldset class="form-group"  >
+            <label>First Name:</label>
+            <input type="text" class="form-control" name="firstName" [(ngModel)]="admin.firstName" />
+            <p style="color: crimson;">{{message1}}</p>
+        </fieldset>
+        <fieldset class="form-group"  >
+            <label>Last Name:</label>
+            <input type="text" class="form-control" name="lastName" [(ngModel)]="admin.lastName" />
+            <p style="color: crimson;">{{message2}}</p>
+        </fieldset>
+        <fieldset class="form-group"  >
+            <label>Age:</label>
+            <input type="number" class="form-control" name="age" [(ngModel)]="admin.age"  />
+        </fieldset>
+        <fieldset class="form-group"  >
+            <label>Gender:</label>
+            <select class="form-control" name="gender" [(ngModel)]="admin.gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="">prefer not to say</option>
+            </select>
+        </fieldset>
+        <fieldset class="form-group"  >
+            <label>Contact Number:</label>
+            <input type="text" class="form-control" name="contactNumber" [(ngModel)]="admin.contactNumber" />
+        </fieldset>
+        <fieldset class="form-group"  >
+            <label>Login Id: (If Desired, you can change) </label>
+            <input type="text" class="form-control" name="loginId" [(ngModel)]="loginId" />
+            <p style="color: crimson;">{{message6}}</p>
+            <label>Password:</label>
+            <input type="password" class="form-control" name="password" [(ngModel)]="password" />
+            <label>Re-enter Password:</label>
+            <input type="password" class="form-control" name="repeatedPassword" [(ngModel)]="repeatedPassword" />
+            <p style="color: crimson;">{{message7}}</p>
+            <label>Question 1: Who is your favourite childhood Hero?</label>
+            <input type="text" class="form-control" name="question1" [(ngModel)]="admin.question1" />
+            <label>Question 2: What is your favourite color</label>
+            <input type="text" class="form-control" name="question2" [(ngModel)]="admin.question2" />
+            <label>Question 3: What is your/your friends pet name?</label>
+            <input type="text" class="form-control" name="question3" [(ngModel)]="admin.question3" />
+            <p style="color: crimson;">{{message8}}</p>
+        </fieldset>
+        <br />
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">submit</button>
+        </div>
+    </form>
+</main>
+
+<div class="text-center">
+    <p>{{message}}</p>
+</div>
